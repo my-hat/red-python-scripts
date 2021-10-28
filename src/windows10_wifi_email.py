@@ -1,4 +1,6 @@
 #! py
+
+
 ######################################
 # Copyright of David Bombal, 2021     #
 # https://www.davidbombal.com         #
@@ -47,7 +49,7 @@ if len(profile_names) != 0:
             # Again run the regular expressions to capture the group after the : which is the password
             password = re.search("Key Content            : (.*)\r", profile_info_pass)
             # Check if we found a password in the regular expression. All wifi connections will not have passwords.
-            if password == None:
+            if password is None:
                 wifi_profile["password"] = None
             else:
                 # We assign the grouping (Where the password is contained) we are interested to the password key in

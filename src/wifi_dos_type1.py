@@ -1,6 +1,7 @@
-  
-#!/usr/bin/env python3
-# Disclaimer: This script is for educational purposes only.  Do not use against any network that you don't own or have authorization to test.
+# !/usr/bin/env python3
+
+# Disclaimer: This script is for educational purposes only.  Do not use against any network
+# that you don't own or have authorization to test.
 
 # We will be using the subprocess module to run commands on Kali Linux.
 import subprocess
@@ -22,7 +23,8 @@ from datetime import datetime
 # Create an empty list
 active_wireless_networks = []
 
-# We use this function to test if the ESSID is already in the list file. 
+
+# We use this function to test if the ESSID is already in the list file.
 # If so we return False so we don't add it again.
 # If it is not in the lst we return True which will instruct the elif 
 # statement to add it to the lst.
@@ -41,6 +43,7 @@ def check_for_essid(essid, lst):
 
     return check_status
 
+
 # Basic user interface header
 print(r"""______            _     _  ______                 _           _ 
 |  _  \          (_)   | | | ___ \               | |         | |
@@ -54,7 +57,6 @@ print("\n* https://www.davidbombal.com                                  *")
 print("\n* https://www.youtube.com/davidbombal                          *")
 print("\n****************************************************************")
 
-
 # If the user doesn't run the program with super user privileges, don't allow them to continue.
 if not 'SUDO_UID' in os.environ.keys():
     print("Try running this program with sudo.")
@@ -65,7 +67,8 @@ for file_name in os.listdir():
     # We should only have one csv file as we delete them from the folder 
     #  every time we run the program.
     if ".csv" in file_name:
-        print("There shouldn't be any .csv files in your directory. We found .csv files in your directory and will move them to the backup directory.")
+        print("There shouldn't be any .csv files in your directory. We found .csv files in your directory and will "
+              "move them to the backup directory.")
         # We get the current working directory.
         directory = os.getcwd()
         try:
@@ -104,8 +107,8 @@ while True:
     try:
         if check_wifi_result[int(wifi_interface_choice)]:
             break
-    except:
-        print("Please enter a number that corresponds with the choices available.")
+    except Exception as e:
+        print(f"Please enter a number that corresponds with the choices available.\n{e}")
 
 # For easy reference we call the selected interface hacknic
 hacknic = check_wifi_result[int(wifi_interface_choice)]
@@ -118,7 +121,7 @@ print("WiFi adapter connected!\nNow let's kill conflicting processes:")
 # and will only continue once the child process has completed.
 # We run the iwconfig command to look for wireless interfaces.
 # Killing all conflicting processes using airmon-ng
-kill_confilict_processes =  subprocess.run(["sudo", "airmon-ng", "check", "kill"])
+kill_confilict_processes = subprocess.run(["sudo", "airmon-ng", "check", "kill"])
 
 # Put wireless in Monitor mode
 print("Putting Wifi adapter into monitored mode:")
@@ -129,7 +132,9 @@ put_in_monitored_mode = subprocess.run(["sudo", "airmon-ng", "start", hacknic])
 # The output is an open file that can be accessed by other programs.
 # We run the iwconfig command to look for wireless interfaces.
 # Discover access points
-discover_access_points = subprocess.Popen(["sudo", "airodump-ng","-w" ,"file","--write-interval", "1","--output-format", "csv", hacknic + "mon"], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+discover_access_points = subprocess.Popen(
+    ["sudo", "airodump-ng", "-w", "file", "--write-interval", "1", "--output-format", "csv", hacknic + "mon"],
+    stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
 
 # Loop that shows the wireless access points. We use a try except block and we will quit the loop by pressing ctrl-c.
 try:
@@ -137,26 +142,28 @@ try:
         # We want to clear the screen before we print the network interfaces.
         subprocess.call("clear", shell=True)
         for file_name in os.listdir():
-                # We should only have one csv file as we backup all previous csv files from the folder every time we run the program. 
-                # The following list contains the field names for the csv entries.
-                fieldnames = ['BSSID', 'First_time_seen', 'Last_time_seen', 'channel', 'Speed', 'Privacy', 'Cipher', 'Authentication', 'Power', 'beacons', 'IV', 'LAN_IP', 'ID_length', 'ESSID', 'Key']
-                if ".csv" in file_name:
-                    with open(file_name) as csv_h:
-                        # This will run multiple times and we need to reset the cursor to the beginning of the file.
-                        csv_h.seek(0)
-                        # We use the DictReader method and tell it to take the csv_h contents and then apply the dictionary with the fieldnames we specified above. 
-                        # This creates a list of dictionaries with the keys as specified in the fieldnames.
-                        csv_reader = csv.DictReader(csv_h, fieldnames=fieldnames)
-                        for row in csv_reader:
-                            # We want to exclude the row with BSSID.
-                            if row["BSSID"] == "BSSID":
-                                pass
-                            # We are not interested in the client data.
-                            elif row["BSSID"] == "Station MAC":
-                                break
-                            # Every field where an ESSID is specified will be added to the list.
-                            elif check_for_essid(row["ESSID"], active_wireless_networks):
-                                active_wireless_networks.append(row)
+            # We should only have one csv file as we backup all previous csv files from the folder every time we
+            # run the program. The following list contains the field names for the csv entries.
+            fieldnames = ['BSSID', 'First_time_seen', 'Last_time_seen', 'channel', 'Speed', 'Privacy', 'Cipher',
+                          'Authentication', 'Power', 'beacons', 'IV', 'LAN_IP', 'ID_length', 'ESSID', 'Key']
+            if ".csv" in file_name:
+                with open(file_name) as csv_h:
+                    # This will run multiple times and we need to reset the cursor to the beginning of the file.
+                    csv_h.seek(0)
+                    # We use the DictReader method and tell it to take the csv_h contents and then apply the
+                    # dictionary with the fieldnames we specified above. This creates a list of dictionaries with the
+                    # keys as specified in the fieldnames.
+                    csv_reader = csv.DictReader(csv_h, fieldnames=fieldnames)
+                    for row in csv_reader:
+                        # We want to exclude the row with BSSID.
+                        if row["BSSID"] == "BSSID":
+                            pass
+                        # We are not interested in the client data.
+                        elif row["BSSID"] == "Station MAC":
+                            break
+                        # Every field where an ESSID is specified will be added to the list.
+                        elif check_for_essid(row["ESSID"], active_wireless_networks):
+                            active_wireless_networks.append(row)
 
         print("Scanning. Press Ctrl+C when you want to select which wireless network you want to attack.\n")
         print("No |\tBSSID              |\tChannel|\tESSID                         |")
