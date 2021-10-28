@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-#Use these commands in Kali to install required software:
+# Use these commands in Kali to install required software:
 #  sudo apt install python3-pip
 #  pip install python-nmap
 
@@ -49,7 +49,7 @@ while True:
     # all the ports is not advised.
     print("Please enter the range of ports you want to scan in format: <int>-<int> (ex would be 60-120)")
     port_range = input("Enter port range: ")
-    port_range_valid = port_range_pattern.search(port_range.replace(" ",""))
+    port_range_valid = port_range_pattern.search(port_range.replace(" ", ""))
     if port_range_valid:
         port_min = int(port_range_valid.group(1))
         port_max = int(port_range_valid.group(2))
@@ -68,7 +68,9 @@ for port in range(port_min, port_max + 1):
         # We extract the port status from the returned object
         port_status = (result['scan'][ip_add_entered]['tcp'][port]['state'])
         print(f"Port {port} is {port_status}")
-    except:
+    except Exception as e:
         # We cannot scan some ports and this ensures the program doesn't crash when we try to scan them.
-        print(f"Cannot scan port {port}.")
-        
+        print(f"Cannot scan port {port}.\n{e}")
+
+if __name__ == "__main__":
+    print('-------------------')

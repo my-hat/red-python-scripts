@@ -1,8 +1,8 @@
 #! py
 ######################################
-#Copyright of David Bombal, 2021     #
-#https://www.davidbombal.com         #
-#https://www.youtube.com/davidbombal #
+# Copyright of David Bombal, 2021     #
+# https://www.davidbombal.com         #
+# https://www.youtube.com/davidbombal #
 ######################################
 
 #    Import subprocess so we can use system commands.
@@ -11,9 +11,8 @@ import subprocess
 #    Import the re module so we can make use of regular expressions. 
 import re
 
-#    Python allows us to run system commands using the function 
-#    provided by the subprocess module; 
-#    (subprocess.run(<list of command line arguments go here>, <specify the second argument if you want to capture the output>)).
+# Python allows us to run system commands using the function provided by the subprocess module; (subprocess.run(<list
+# of command line arguments go here>, <specify the second argument if you want to capture the output>)).
 #
 #    This script is a parent process that creates a child process which 
 #    runs a system command and will only continue once the child process 
@@ -24,7 +23,7 @@ import re
 #    To do this we specify the second argument as capture_output = True. 
 #    This information gets stored in the stdout attribute as bytes and 
 #    needs to be decoded before being used as a String in Python.
-command_output = subprocess.run(["netsh", "wlan", "show", "profiles"], capture_output = True).stdout.decode()
+command_output = subprocess.run(["netsh", "wlan", "show", "profiles"], capture_output=True).stdout.decode()
 
 #    We imported the re module to make use of regular expressions. 
 #    We want to find all the wifi names which are listed after 
@@ -47,7 +46,7 @@ if len(profile_names) != 0:
         #    We can now run a more specific command to see the information 
         #    about the wifi connection and if the Security key
         #    is not absent it may be possible to get the password.
-        profile_info = subprocess.run(["netsh", "wlan", "show", "profile", name], capture_output = True).stdout.decode()
+        profile_info = subprocess.run(["netsh", "wlan", "show", "profile", name], capture_output=True).stdout.decode()
         #    We use the regular expression to only look for the absent cases so we can ignore them.
         if re.search("Security key           : Absent", profile_info):
             continue
@@ -56,21 +55,21 @@ if len(profile_names) != 0:
             wifi_profile["ssid"] = name
             #    These cases aren't absent and we should run the 
             #    "key=clear" command part to get the password.
-            profile_info_pass = subprocess.run(["netsh", "wlan", "show", "profile", name, "key=clear"], capture_output = True).stdout.decode()
+            profile_info_pass = subprocess.run(["netsh", "wlan", "show", "profile", name, "key=clear"],
+                                               capture_output=True).stdout.decode()
             #    Again run the regular expression to capture the 
             #    group after the : (which is the password).
             password = re.search("Key Content            : (.*)\r", profile_info_pass)
             #    Check if we found a password using the regular expression. 
             #    Some wifi connections may not have passwords.
-            if password == None:
+            if password is None:
                 wifi_profile["password"] = None
             else:
                 #    We assign the grouping (where the password is contained) that 
                 #    we are interested in to the password key in the dictionary.
                 wifi_profile["password"] = password[1]
             #    We append the wifi information to the variable wifi_list.
-            wifi_list.append(wifi_profile) 
+            wifi_list.append(wifi_profile)
 
 for x in range(len(wifi_list)):
-    print(wifi_list[x]) 
-
+    print(wifi_list[x])

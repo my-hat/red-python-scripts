@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 ##################################################################################################
-#Copyright of David Bombal, 2021                                                                 #
-#https://www.davidbombal.com                                                                     #
-#https://www.youtube.com/davidbombal                                                             #
+# Copyright of David Bombal, 2021                                                                #
+# https://www.davidbombal.com                                                                    #
+# https://www.youtube.com/davidbombal                                                            #
 #                                                                                                #
 # Please note that this code can be improved by using functions. It is not programmed to cater   #
 # for all situations, but to be used as a learning tool.                                         #
@@ -64,10 +64,10 @@ for macAdd in getmac_output:
     # We use the regex to find the transport name.
     transportFind = transportName.search(macAdd)
     # If you don't find a Mac Address or Transport name the option won't be listed.
-    if macFind == None or transportFind == None:
+    if macFind is None or transportFind is None:
         continue
     # We append a tuple with the Mac Address and the Transport name to a list.
-    mac_addresses.append((macFind.group(0),transportFind.group(0)))
+    mac_addresses.append((macFind.group(0), transportFind.group(0)))
 
 # Create a simple menu to select which Mac Address the user want to update.
 print("Which MAC Address do you want to update?")
@@ -136,10 +136,10 @@ with winreg.ConnectRegistry(None, winreg.HKEY_LOCAL_MACHINE) as hkey:
         except:
             pass
 
-
 # Code to disable and enable Wireless devicess
 run_disable_enable = input("Do you want to disable and reenable your wireless device(s). Press Y or y to continue:")
-# Changes the input to lowercase and compares to y. If not y the while function which contains the last part will never run.
+# Changes the input to lowercase and compares to y. If not y the while function which contains the last part will
+# never run.
 if run_disable_enable.lower() == 'y':
     run_last_part = True
 else:
@@ -148,30 +148,43 @@ else:
 # run_last_part will be set to True or False based on above code.
 while run_last_part:
 
-    # Code to disable and enable the network adapters
-    # We get a list of all network adapters. You have to ignore errors, as it doesn't like the format the command returns the data in.
-    network_adapters = subprocess.run(["wmic", "nic", "get", "name,index"], capture_output=True).stdout.decode('utf-8', errors="ignore").split('\r\r\n')
+    # Code to disable and enable the network adapters We get a list of all network adapters. You have to ignore
+    # errors, as it doesn't like the format the command returns the data in.
+    network_adapters = subprocess.run(["wmic", "nic", "get", "name,index"], capture_output=True).stdout.decode('utf-8',
+                                                                                                               errors="ignore").split(
+        '\r\r\n')
     for adapter in network_adapters:
         # We get the index for each adapter
         adapter_index_find = adapterIndex.search(adapter.lstrip())
-        # If there is an index and the adapter has wireless in description we are going to disable and enable the adapter
+        # If there is an index and the adapter has wireless in description we are going to disable and enable the
+        # adapter
         if adapter_index_find and "Wireless" in adapter:
-            disable = subprocess.run(["wmic", "path", "win32_networkadapter", "where", f"index={adapter_index_find.group(0)}", "call", "disable"],capture_output=True)
+            disable = subprocess.run(
+                ["wmic", "path", "win32_networkadapter", "where", f"index={adapter_index_find.group(0)}", "call",
+                 "disable"], capture_output=True)
             # If the return code is 0, it means that we successfully disabled the adapter
-            if(disable.returncode == 0):
+            if (disable.returncode == 0):
                 print(f"Disabled {adapter.lstrip()}")
             # We now enable the network adapter again.
-            enable = subprocess.run(["wmic", "path", f"win32_networkadapter", "where", f"index={adapter_index_find.group(0)}", "call", "enable"],capture_output=True)
+            enable = subprocess.run(
+                ["wmic", "path", f"win32_networkadapter", "where", f"index={adapter_index_find.group(0)}", "call",
+                 "enable"], capture_output=True)
             # If the return code is 0, it means that we successfully enabled the adapter
             if (enable.returncode == 0):
                 print(f"Enabled {adapter.lstrip()}")
 
     # We run the getmac command again
     getmac_output = subprocess.run("getmac", capture_output=True).stdout.decode()
-    # We recreate the Mac Address as ot shows up in getmac XX-XX-XX-XX-XX-XX format from the 12 character string we have. We split the string into strings of length 2 using list comprehensions and then. We use "-".join(list) to recreate the address
-    mac_add = "-".join([(mac_to_change_to[int(update_option)][i:i+2]) for i in range(0, len(mac_to_change_to[int(update_option)]), 2)])
+    # We recreate the Mac Address as ot shows up in getmac XX-XX-XX-XX-XX-XX format from the 12 character string we
+    # have. We split the string into strings of length 2 using list comprehensions and then. We use "-".join(list) to
+    # recreate the address
+    mac_add = "-".join([(mac_to_change_to[int(update_option)][i:i + 2]) for i in
+                        range(0, len(mac_to_change_to[int(update_option)]), 2)])
     # We want to check if Mac Address we changed to is in getmac output, if so we have been successful.
     if mac_add in getmac_output:
         print("Mac Address Success")
     # Break out of the While loop. Could also change run_last_part to False.
     break
+
+if __name__ == "__main__":
+    print('-------------------')

@@ -90,3 +90,7 @@ for port in range(port_min, port_max + 1):
 for port in open_ports:
     # We use an f string to easily format the string with variables so we don't have to do concatenation.
     print(f"Port {port} is open on {ip_add_entered}.")
+
+
+if __name__ == "__main__":
+    print('-------------------')
