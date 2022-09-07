@@ -83,8 +83,9 @@ for port in range(port_min, port_max + 1):
             # If the following line runs then then it was successful in connecting to the port.
             open_ports.append(port)
 
-    except:
+    except Exception as e:
         # We don't need to do anything here. If we were interested in the closed ports we'd put something here.
+        print(e)
         pass
 
 # We only care about the open ports.
